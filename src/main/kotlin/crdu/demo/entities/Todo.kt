@@ -5,4 +5,4 @@ data class Todo(
     val userId: Int,
     val title: String,
     val completed: Boolean
-)
+): Entity
