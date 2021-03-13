@@ -16,10 +16,13 @@ dependencies {
     implementation("org.http4k:http4k-core")
     implementation("org.http4k:http4k-cloudnative")
     implementation("org.http4k:http4k-client-apache")
+    implementation("org.http4k:http4k-format-jackson")
 
     testImplementation(kotlin("test-junit5"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
+
+    testImplementation("org.http4k:http4k-template-handlebars")
 }
 
 tasks.test {
