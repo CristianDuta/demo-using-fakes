@@ -58,8 +58,8 @@ class Scenario1 {
         val todosActivityReport = Body.auto<TodosActivityReport>().toLens()(todosActivityReportResponse)
 
         // THEN
-        assertEquals(commentsActivityReport, CommentsActivityReportFixture.commentsActivityReport)
-        assertEquals(photosActivityReport, PhotosActivityReportFixture.photosActivityReport)
-        assertEquals(todosActivityReport, TodosActivityReportFixture.photosActivityReport)
+        assertEquals(CommentsActivityReportFixture.commentsActivityReport, commentsActivityReport)
+        assertEquals(PhotosActivityReportFixture.photosActivityReport, photosActivityReport)
+        assertEquals(TodosActivityReportFixture.photosActivityReport, todosActivityReport)
     }
 }
