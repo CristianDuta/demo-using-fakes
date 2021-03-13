@@ -1,9 +1,8 @@
 package crdu.demo.datasources
 
-import crdu.demo.entities.Entity
+import org.http4k.core.Request
+import org.http4k.core.Response
 
-interface DataSource<T : Entity> {
-    fun <T> fetchDataForCollection(collectionName: String): List<T>
-    fun fetchDataForCollectionItem(collectionName: String, itemId: Int): T
-    fun <T> fetchDataForCollectionInRelationTo(collectionName: String, inRelationTo: Pair<String, Int>): List<T>
+interface DataSource {
+    fun fetch(request: Request): Response
 }
