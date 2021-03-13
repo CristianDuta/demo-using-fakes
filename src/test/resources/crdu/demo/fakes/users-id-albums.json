@@ -1,0 +1,27 @@
+[
+  {
+    "userId": "{{resourceId}}",
+    "id": 1,
+    "title": "quidem molestiae enim"
+  },
+  {
+    "userId": "{{resourceId}}",
+    "id": 2,
+    "title": "sunt qui excepturi placeat culpa"
+  },
+  {
+    "userId": "{{resourceId}}",
+    "id": 3,
+    "title": "omnis laborum odio"
+  },
+  {
+    "userId": "{{resourceId}}",
+    "id": 4,
+    "title": "non esse culpa molestiae omnis sed optio"
+  },
+  {
+    "userId": "{{resourceId}}",
+    "id": 5,
+    "title": "eaque aut omnis a"
+  }
+]
