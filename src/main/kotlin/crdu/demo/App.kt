@@ -5,9 +5,9 @@ import crdu.demo.EnvironmentKeys.REPOSITORY_API_URL
 import crdu.demo.datasources.DataSource
 import crdu.demo.datasources.JsonPlaceholderDataSource
 import crdu.demo.events.EventLogger
-import crdu.demo.events.IncomingHttpRequest
-import crdu.demo.events.OutgoingHttpRequest
 import crdu.demo.events.addEventType
+import crdu.demo.events.logIncomingTraffic
+import crdu.demo.events.logOutgoingTraffic
 import crdu.demo.handlers.commentsActivityReportHandler
 import crdu.demo.handlers.photosActivityReportHandler
 import crdu.demo.handlers.todosActivityReportHandler
@@ -17,9 +17,8 @@ import org.http4k.core.HttpHandler
 import org.http4k.core.Method.GET
 import org.http4k.core.then
 import org.http4k.events.AutoMarshallingEvents
-import org.http4k.events.EventFilters
+import org.http4k.events.EventFilters.AddTimestamp
 import org.http4k.events.then
-import org.http4k.filter.ResponseFilters
 import org.http4k.filter.debug
 import org.http4k.format.Jackson
 import org.http4k.routing.bind
@@ -32,20 +31,11 @@ fun app(
     baseEventLogger: EventLogger = AutoMarshallingEvents(Jackson),
     dataSourceAsDependency: DataSource? = null
 ): HttpHandler {
-    val eventLogger = EventFilters.AddTimestamp(Clock.systemDefaultZone())
+    val eventLogger = AddTimestamp(Clock.systemDefaultZone())
         .then(addEventType())
         .then(baseEventLogger)
 
-    val httpClient = ResponseFilters.ReportHttpTransaction {
-        eventLogger(
-            OutgoingHttpRequest(
-                it.request.uri,
-                it.request.method,
-                it.duration.toMillis(),
-                it.response.status.code
-            )
-        )
-    }.then(
+    val httpClient = logOutgoingTraffic(eventLogger).then(
         if (DEBUG(env)) {
             rawHttpClient.debug(debugStream = true)
         } else {
@@ -53,18 +43,10 @@ fun app(
         }
     )
 
-    val dataSource: DataSource = dataSourceAsDependency ?: JsonPlaceholderDataSource(REPOSITORY_API_URL(env), httpClient)
+    val dataSource: DataSource =
+        dataSourceAsDependency ?: JsonPlaceholderDataSource(REPOSITORY_API_URL(env), httpClient)
 
-    return ResponseFilters.ReportHttpTransaction {
-        eventLogger(
-            IncomingHttpRequest(
-                it.request.uri,
-                it.request.method,
-                it.duration.toMillis(),
-                it.response.status.code
-            )
-        )
-    }.then(
+    return logIncomingTraffic(eventLogger).then(
         routes(
             "/activity" bind GET to routes(
                 "/reports" bind GET to routes(
