@@ -29,7 +29,8 @@ import java.time.Clock
 fun app(
     env: Environment,
     rawHttpClient: HttpHandler,
-    baseEventLogger: EventLogger = AutoMarshallingEvents(Jackson)
+    baseEventLogger: EventLogger = AutoMarshallingEvents(Jackson),
+    dataSourceAsDependency: DataSource? = null
 ): HttpHandler {
     val eventLogger = EventFilters.AddTimestamp(Clock.systemDefaultZone())
         .then(addEventType())
@@ -52,7 +53,7 @@ fun app(
         }
     )
 
-    val dataSource: DataSource = JsonPlaceholderDataSource(REPOSITORY_API_URL(env), httpClient)
+    val dataSource: DataSource = dataSourceAsDependency ?: JsonPlaceholderDataSource(REPOSITORY_API_URL(env), httpClient)
 
     return ResponseFilters.ReportHttpTransaction {
         eventLogger(
