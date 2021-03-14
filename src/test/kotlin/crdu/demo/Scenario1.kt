@@ -46,20 +46,21 @@ class Scenario1 {
         val port = app(env, httpClient).asServer(SunHttp(0)).start().port()
         val appUrl = "http://localhost:$port"
         val apacheClient = ApacheClient()
+        val userId = 1
 
         // WHEN
-        val commentsActivityReportResponse = apacheClient(Request(Method.GET, "$appUrl/activity/reports/comments/1"))
+        val commentsActivityReportResponse = apacheClient(Request(Method.GET, "$appUrl/activity/reports/comments/$userId"))
         val commentsActivityReport = Body.auto<CommentsActivityReport>().toLens()(commentsActivityReportResponse)
 
-        val photosActivityReportResponse = apacheClient(Request(Method.GET, "$appUrl/activity/reports/photos/1"))
+        val photosActivityReportResponse = apacheClient(Request(Method.GET, "$appUrl/activity/reports/photos/$userId"))
         val photosActivityReport = Body.auto<PhotosActivityReport>().toLens()(photosActivityReportResponse)
 
-        val todosActivityReportResponse = apacheClient(Request(Method.GET, "$appUrl/activity/reports/todos/1"))
+        val todosActivityReportResponse = apacheClient(Request(Method.GET, "$appUrl/activity/reports/todos/$userId"))
         val todosActivityReport = Body.auto<TodosActivityReport>().toLens()(todosActivityReportResponse)
 
         // THEN
         assertEquals(CommentsActivityReportFixture.commentsActivityReport, commentsActivityReport)
         assertEquals(PhotosActivityReportFixture.photosActivityReport, photosActivityReport)
-        assertEquals(TodosActivityReportFixture.photosActivityReport, todosActivityReport)
+        assertEquals(TodosActivityReportFixture(userId).todosActivityReport, todosActivityReport)
     }
 }
