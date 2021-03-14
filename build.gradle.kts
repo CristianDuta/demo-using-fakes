@@ -23,6 +23,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
 
     testImplementation("org.http4k:http4k-template-handlebars")
+    testImplementation("org.mockito:mockito-core:3.6.0")
 }
 
 tasks.test {
