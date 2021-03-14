@@ -3,6 +3,7 @@ package crdu.demo.handlers
 import crdu.demo.entities.Album
 import crdu.demo.entities.Photo
 import crdu.demo.events.EventLogger
+import crdu.demo.events.GeneratePhotosActivityReport
 import crdu.demo.repositories.AlbumRepository
 import crdu.demo.repositories.PhotoRepository
 import org.http4k.core.*
@@ -22,6 +23,7 @@ fun photosActivityReportHandler(
 ): HttpHandler {
     return {
         val userId = Path.int().of("userId")(it)
+        eventLogger(GeneratePhotosActivityReport(userId))
 
         val photos: MutableList<Photo> = mutableListOf()
         val albums: List<Album> = albumRepository.findAllForUser(userId)

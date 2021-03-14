@@ -2,6 +2,7 @@ package crdu.demo.handlers
 
 import crdu.demo.entities.Todo
 import crdu.demo.events.EventLogger
+import crdu.demo.events.GenerateTodosActivityReport
 import crdu.demo.repositories.TodoRepository
 import org.http4k.core.*
 import org.http4k.format.Jackson.auto
@@ -16,6 +17,7 @@ data class TodosActivityReport(
 fun todosActivityReportHandler(eventLogger: EventLogger, todoRepository: TodoRepository): HttpHandler {
     return {
         val userId = Path.int().of("userId")(it)
+        eventLogger(GenerateTodosActivityReport(userId))
 
         val todos = todoRepository.findAllForUser(userId)
 

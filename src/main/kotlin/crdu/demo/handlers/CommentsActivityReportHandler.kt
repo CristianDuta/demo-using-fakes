@@ -2,6 +2,7 @@ package crdu.demo.handlers
 
 import crdu.demo.entities.Comment
 import crdu.demo.events.EventLogger
+import crdu.demo.events.GenerateCommentsActivityReport
 import crdu.demo.repositories.CommentRepository
 import crdu.demo.repositories.PostRepository
 import org.http4k.core.*
@@ -21,6 +22,7 @@ fun commentsActivityReportHandler(
 ): HttpHandler {
     return {
         val userId = Path.int().of("userId")(it)
+        eventLogger(GenerateCommentsActivityReport(userId))
 
         val comments: MutableList<Comment> = mutableListOf()
         val posts = postRepository.findAllForUser(userId)
