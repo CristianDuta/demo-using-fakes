@@ -64,12 +64,12 @@ class Scenario3 {
         Mockito.`when`(mockedDataSource.fetch(Request(Method.GET, "/users/$userId/albums"))).thenReturn(
             Response(Status.OK).with(Body.auto<Any>().toLens() of albums)
         )
-        for (index in albums.indices) {
-            Mockito.`when`(mockedDataSource.fetch(Request(Method.GET, "/albums/${albums[index].id}/photos")))
+        for (album in albums) {
+            Mockito.`when`(mockedDataSource.fetch(Request(Method.GET, "/albums/${album.id}/photos")))
                 .thenReturn(
                     Response(Status.OK).with(
                         Body.auto<Any>().toLens() of PhotosActivityReportFixture.photosActivityReport.photos.filter { photo ->
-                            photo.albumId == albums[index].id
+                            photo.albumId == album.id
                         }
                     )
                 )
@@ -79,12 +79,12 @@ class Scenario3 {
         Mockito.`when`(mockedDataSource.fetch(Request(Method.GET, "/users/$userId/posts"))).thenReturn(
             Response(Status.OK).with(Body.auto<Any>().toLens() of posts)
         )
-        for (index in posts.indices) {
-            Mockito.`when`(mockedDataSource.fetch(Request(Method.GET, "/posts/${posts[index].id}/comments")))
+        for (post in posts) {
+            Mockito.`when`(mockedDataSource.fetch(Request(Method.GET, "/posts/${post.id}/comments")))
                 .thenReturn(
                     Response(Status.OK).with(
                         Body.auto<Any>().toLens() of CommentsActivityReportFixture.commentsActivityReport.comments.filter { comment ->
-                            comment.postId == posts[index].id
+                            comment.postId == post.id
                         }
                     )
                 )
