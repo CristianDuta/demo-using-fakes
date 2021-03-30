@@ -1,5 +1,7 @@
 package crdu.demo
 
+import crdu.demo.EnvironmentKeys.DEBUG
+import crdu.demo.EnvironmentKeys.REPOSITORY_API_URL
 import crdu.demo.fakes.FakeJsonPlaceholder
 import crdu.demo.fixtures.CommentsActivityReportFixture
 import crdu.demo.fixtures.PhotosActivityReportFixture
@@ -10,6 +12,7 @@ import crdu.demo.handlers.TodosActivityReport
 import org.http4k.client.ApacheClient
 import org.http4k.cloudnative.env.Environment
 import org.http4k.core.*
+import org.http4k.filter.debug
 import org.http4k.format.Jackson.auto
 import org.http4k.server.SunHttp
 import org.http4k.server.asServer
@@ -17,21 +20,30 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 /**
- * Scenario 2: Start service locally and pass in the URL
+ * Scenario 2: Intercepting http calls
  */
 
 class Scenario2 {
-    private val port = FakeJsonPlaceholder().asServer(SunHttp(0)).start().port()
     private val env = Environment.EMPTY
         .with(
-            EnvironmentKeys.DEBUG of false,
-            EnvironmentKeys.REPOSITORY_API_URL of "http://localhost:$port"
+            DEBUG of false,
+            REPOSITORY_API_URL of "http://jsonPlaceholder.crdu.fake"
         )
+
+    private val interceptJsonPlaceholderRequests = Filter { next ->
+        {
+            when (it.uri.host) {
+                Uri.of(REPOSITORY_API_URL(env)).host -> FakeJsonPlaceholder()(it)
+                else -> next(it)
+            }
+        }
+    }
+    private val httpClient = interceptJsonPlaceholderRequests.then(ApacheClient())
 
     @Test
     fun `GIVEN FakeJsonPlaceholder WHEN request is made THEN return fake data from json files`() {
         // GIVEN
-        val port = app(env, ApacheClient()).asServer(SunHttp(0)).start().port()
+        val port = app(env, httpClient).asServer(SunHttp(0)).start().port()
         val appUrl = "http://localhost:$port"
         val apacheClient = ApacheClient()
         val userId = 1
